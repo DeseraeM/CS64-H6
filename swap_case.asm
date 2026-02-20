@@ -112,15 +112,15 @@ loop:
     li  $t0, 97  
     li  $t1, 122 
     slt $t2, $s2, $t0  
-    bne $t2, $zero, lowcase
+    bne $t2, $zero, upper
 
     slt $t2, $t1, $s2  
-    bne $t2, $zero, lowcase
+    bne $t2, $zero, upper
  
     addi $s3, $s2, -32
     j  print
 
-lowcase:
+upper:
     li $t0, 65  
     li $t1, 90
 
@@ -131,6 +131,7 @@ lowcase:
     bne $t2, $zero, skip
 
     addi $s3, $s2, 32
+    j print
 
 print: 
     sb $s2, 8($sp)
@@ -143,7 +144,7 @@ print:
     la  $a0, newline 
     syscall
     
-    
+
     sb $s3, 4($sp)       
     sb $zero, 5($sp)  
     li $v0, 4
