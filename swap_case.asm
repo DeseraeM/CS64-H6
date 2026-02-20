@@ -96,60 +96,65 @@ SwapCase:
 
     li $t0, 0
 
-    addi $sp, $sp, -16
-    sw $ra, 12($sp)
-    sw $s1, 8($sp)
-    sw $s2, 4($sp)
-    sw $s3, 0($sp)
+    addi $sp, $sp, -32
+    sw $ra, 28($sp)
+    sw $s1, 24($sp)
+    sw $s2, 20($sp)
+    sw $s3, 16($sp)
+    sw $s0, 12($sp)
     move $s1, $a0
+    move $s0, $a0   
 
 loop:
     lb   $s2, 0($s1)
     beq  $s2, $zero, clean 
 
-    li   $t0, 65  
-    li   $t1, 90
+    li  $t0, 97  
+    li  $t1, 122 
+    slt $t2, $s2, $t0  
+    bne $t2, $zero, lowcase
 
-    slt  $t2, $s2, $t0 
-    bne  $t2, $zero, lowcase
-
-    slt  $t2, $t1, $s2 
-    bne  $t2, $zero, lowcase
-
-    addi $s3, $s2, 32
-    j  print
-
-
-lowcase:
-    li   $t0, 97  
-    li   $t1, 122 
-
-    slt  $t2, $s2, $t0  
-    bne  $t2, $zero, skip
-
-    slt  $t2, $t1, $s2  
-    bne  $t2, $zero, skip
+    slt $t2, $t1, $s2  
+    bne $t2, $zero, lowcase
  
     addi $s3, $s2, -32
+    j  print
+
+lowcase:
+    li $t0, 65  
+    li $t1, 90
+
+    slt $t2, $s2, $t0 
+    bne $t2, $zero, skip
+
+    slt $t2, $t1, $s2 
+    bne $t2, $zero, skip
+
+    addi $s3, $s2, 32
 
 print: 
-    li   $v0, 11
-    move $a0, $s0
+    sb $s2, 8($sp)
+    sb $zero, 9 ($sp)
+    li $v0, 4
+    addi $a0, $sp, 8
     syscall
 
     li   $v0, 4
     la  $a0, newline 
     syscall
     
-    li   $v0, 11
-    move $a0, $s3 
+    
+    sb $s3, 4($sp)       
+    sb $zero, 5($sp)  
+    li $v0, 4
+    addi $a0, $sp, 4
     syscall
     
     li  $v0, 4
-    la   $a0, newline 
+    la  $a0, newline 
     syscall
 
-    sb $s2, 0($s1)
+    sb $s3, 0($s1)
     jal ConventionCheck
 
 skip:
@@ -157,11 +162,12 @@ skip:
     j loop 
     
 clean:
-    lw  $s2, 0($sp)
-    lw  $s1, 4($sp)
-    lw  $s0, 8($sp)
-    lw $ra, 12($sp)
-    addi $sp, $sp, 16
+    lw $s0, 12($sp)
+    lw  $s3, 16($sp)
+    lw  $s2, 20($sp)
+    lw  $s1, 24($sp)
+    lw $ra, 28($sp)
+    addi $sp, $sp, 32
     # Do not remove the "jr $ra" line below!!!
     # It should be the last line in your function code!
     jr $ra
