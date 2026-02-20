@@ -18,19 +18,21 @@ loop:
     bge $t1, $a2, endL
     
     move $t3, $t0
-    sll $t0, $a1, 2
+    sll $t4, $a1, 2
 
     sub $t3, $t3, $a0
-    add $t0, $t3, $t0
+    add $t0, $t3, $t4
 
     li $t2, 2
-    blt $a0, $t2, endL
+    blt $a0, $t2, increment
+
     sub $a1, $a1, $a0
 
+
+increment: 
     addi $a0, $a0, 1
     addi $t1, $t1, 1
-    j loop 
-
+    j loop
  endL: 
     move $v0, $t0
     jr $ra  
